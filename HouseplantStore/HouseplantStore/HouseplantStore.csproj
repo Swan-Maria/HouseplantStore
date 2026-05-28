@@ -1,0 +1,55 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.16">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="MudBlazor" Version="9.4.0" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+        <ProjectReference Include="..\..\Shared\Shared.csproj" />
+        <ProjectReference Include="..\HouseplantStore.Client\HouseplantStore.Client.csproj"/>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.13"/>
+        <PackageReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="wwwroot\products.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="wwwroot\images\plants\african_violet.jpg" />
+      <None Include="wwwroot\images\plants\aloe_vera.jpg" />
+      <None Include="wwwroot\images\plants\anthurium.jpg" />
+      <None Include="wwwroot\images\plants\areca_palm.jpg" />
+      <None Include="wwwroot\images\plants\barrel_cactus.jpg" />
+      <None Include="wwwroot\images\plants\bird_of_paradise.jpg" />
+      <None Include="wwwroot\images\plants\calathea.jpg" />
+      <None Include="wwwroot\images\plants\christmas_cactus.jpg" />
+      <None Include="wwwroot\images\plants\echeveria.jpg" />
+      <None Include="wwwroot\images\plants\fiddle_leaf_fig.jpg" />
+      <None Include="wwwroot\images\plants\haworthia.jpg" />
+      <None Include="wwwroot\images\plants\jade_plant.jpg" />
+      <None Include="wwwroot\images\plants\kalanchoe.jpg" />
+      <None Include="wwwroot\images\plants\majesty_palm.jpg" />
+      <None Include="wwwroot\images\plants\monstera.jpg" />
+      <None Include="wwwroot\images\plants\orchid.jpg" />
+      <None Include="wwwroot\images\plants\peace_lily.jpg" />
+      <None Include="wwwroot\images\plants\pothos.jpg" />
+      <None Include="wwwroot\images\plants\rubber_tree.jpg" />
+      <None Include="wwwroot\images\plants\snake_plant.jpg" />
+      <None Include="wwwroot\images\plants\spider_plant.jpg" />
+      <None Include="wwwroot\images\plants\string_of_pearls.jpg" />
+      <None Include="wwwroot\images\plants\yucca.jpg" />
+      <None Include="wwwroot\images\plants\zz_plant.jpg" />
+    </ItemGroup>
+
+</Project>
