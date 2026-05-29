@@ -7,33 +7,50 @@
 @inject ISnackbar Snackbar
 
 <MudContainer MaxWidth="MaxWidth.Medium" Class="py-8">
-    <MudText Typo="Typo.h4" Class="mb-6">Checkout</MudText>
+    <MudText Typo="Typo.h2" Class="mb-6" >
+        Checkout
+    </MudText>
     
     <div class="d-flex flex-column flex-md-row gap-8">
         <MudPaper Elevation="0" Class="pa-6" Style="flex: 1; background: rgba(0,0,0,0.02);">
-            <MudText Typo="Typo.h6" Class="mb-4">Your Order</MudText>
+            <MudText Typo="Typo.h4" Class="mb-4">
+                Your Order
+            </MudText>
             @foreach (var item in CartService.Items)
             {
                 <div class="d-flex align-center gap-4 mb-4">
-                    <MudImage Src="@item.Plant.ImageUrl" Width="50" Height="50" Class="rounded" />
+                    <MudImage Src="@item.Plant.ImageUrl" 
+                              Width="50" 
+                              Height="50" 
+                              Class="rounded" />
                     <div class="flex-grow-1">
-                        <MudText  Color="Color.Secondary" Typo="Typo.body2">@item.Plant.Name</MudText>
-                        <MudText  Color="Color.Secondary" Typo="Typo.caption">Qty: @item.Quantity</MudText>
+                        <MudText Typo="Typo.body2" >
+                            @item.Plant.Name
+                        </MudText>
+                        <MudText Typo="Typo.caption" >
+                            Qty: @item.Quantity
+                        </MudText>
                     </div>
-                    <MudText  Color="Color.Secondary" Typo="Typo.body2">@((item.Plant.Price * item.Quantity).ToString("C2"))</MudText>
+                    <MudText Typo="Typo.body2" >
+                        @((item.Plant.Price * item.Quantity).ToString("C2", System.Globalization.CultureInfo.CreateSpecificCulture("en-US")))
+                    </MudText>
                 </div>
             }
             <MudDivider Class="my-4"/>
-            <MudText  Color="Color.Secondary" Typo="Typo.h6" Align="Align.Right">Total: @CartService.Total.ToString("C2")</MudText>
+            <MudText Typo="Typo.h4" Align="Align.Right" >
+                Total: @CartService.Total.ToString("C2", System.Globalization.CultureInfo.CreateSpecificCulture("en-US"))
+            </MudText>
         </MudPaper>
 
         <MudPaper Elevation="0" Class="pa-6" Style="flex: 1;">
-            <MudText  Typo="Typo.h6" Class="mb-4">Shipping Info</MudText>
+            <MudText Typo="Typo.h4" Class="mb-4" >
+                Shipping Info
+            </MudText>
             
             <MudTextField T="string" Label="Full Name" @bind-Value="_orderName" Class="mb-3" />
             <MudTextField T="string" Label="Email" @bind-Value="_orderEmail" Class="mb-3" />
             
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Size="Size.Large" OnClick="FinalizeOrder">
+            <MudButton Variant="Variant.Filled"  FullWidth="true" Size="Size.Large" OnClick="FinalizeOrder" Color="Color.Primary">
                 Place Order
             </MudButton>
         </MudPaper>
@@ -44,19 +61,21 @@
     private string _orderName = "";
     private string _orderEmail = "";
 
-    private async Task FinalizeOrder() 
+    private async Task FinalizeOrder()
     {
-        var order = new Order {
+        var order = new Order
+        {
             CustomerName = _orderName,
             CustomerEmail = _orderEmail,
-            TotalPrice = (double)CartService.Total, 
-            Items = CartService.Items.Select(i => new OrderItem { 
+            TotalPrice = (double)CartService.Total,
+            Items = CartService.Items.Select(i => new OrderItem
+            {
                 PlantId = i.Plant.Id,
-                Quantity = i.Quantity 
+                Quantity = i.Quantity
             }).ToList()
         };
 
-        try 
+        try
         {
             var response = await Http.PostAsJsonAsync("api/orders", order);
 
@@ -77,4 +96,5 @@
             Snackbar.Add("Connection error", Severity.Error);
         }
     }
+}
 }

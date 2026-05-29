@@ -8,156 +8,123 @@
 <div style="display: grid; grid-template-columns: 240px 1fr; gap: 24px; width: 100%; align-items: start;">
 
     <aside style="position: sticky; top: 80px; max-height: calc(100vh - 104px); overflow-y: auto; padding-right: 4px;">
+        <MudPaper Class="pa-4" Elevation="0" Style="background: transparent;">
 
-        <MudPaper Elevation="0" Square="true" Class="pa-4 d-flex flex-column" Style="background: transparent;">
-
-            <MudText Typo="Typo.h5" Class="font-weight-bold mb-1">
+            <!-- TITLE -->
+            <MudText Typo="Typo.h1" Class="font-weight-bold mb-1">
                 All Plants
             </MudText>
 
-            <MudText Typo="Typo.body2"
-                     Color="Color.Secondary"
-                     Class="mb-6">
-
-                @(_plants?.Count ?? 0) Plants Available
-
+            <MudText Typo="Typo.body2" Class="mb-2">
+                @_plants?.Count() Plants Available
             </MudText>
-
-            <!-- Categories -->
-
-            <MudText Typo="Typo.subtitle2"
-                     Class="font-weight-bold mb-2">
-
+            
+            <!-- CATEGORIES -->
+            <MudText Typo="Typo.h5" Class="font-weight-bold mt-3 mb-2">
                 Categories
-
             </MudText>
 
-            <MudList T="int"
-                     Dense="true"
-                     Class="mb-4">
+            <MudList T="PlantCategory?" Dense="true" Class="mb-4">
 
-                <MudListItem OnClick="() => FilterByCategory(null)">
-                    <div class="d-flex justify-space-between w-100">
-                        <span>All Plants</span>
-                        <span>@(_plants?.Count ?? 0)</span>
+                <MudListItem T="PlantCategory?" Value="null"
+                             OnClick="() => FilterByCategory(null)">
+                    <div class="d-flex justify-space-between align-center w-100">
+                        <MudText Typo="Typo.h6">All Plants</MudText>
+                        <MudText Typo="Typo.h6">@(_plants?.Count ?? 0)</MudText>
                     </div>
                 </MudListItem>
 
-                <MudListItem OnClick="() => FilterByCategory(PlantCategory.Foliage)">
-                    <div class="d-flex justify-space-between w-100">
-                        <span>Foliage</span>
-                        <span>@(_plants?.Count(p => p.Category == PlantCategory.Foliage) ?? 0)</span>
-                    </div>
-                </MudListItem>
-
-                <MudListItem OnClick="() => FilterByCategory(PlantCategory.Blooming)">
-                    <div class="d-flex justify-space-between w-100">
-                        <span>Blooming</span>
-                        <span>@(_plants?.Count(p => p.Category == PlantCategory.Blooming) ?? 0)</span>
-                    </div>
-                </MudListItem>
-
-                <MudListItem OnClick="() => FilterByCategory(PlantCategory.Succulents)">
-                    <div class="d-flex justify-space-between w-100">
-                        <span>Succulents</span>
-                        <span>@(_plants?.Count(p => p.Category == PlantCategory.Succulents) ?? 0)</span>
-                    </div>
-                </MudListItem>
-
-                <MudListItem OnClick="() => FilterByCategory(PlantCategory.LargeSize)">
-                    <div class="d-flex justify-space-between w-100">
-                        <span>Large Size</span>
-                        <span>@(_plants?.Count(p => p.Category == PlantCategory.LargeSize) ?? 0)</span>
-                    </div>
-                </MudListItem>
+                @foreach (PlantCategory cat in Enum.GetValues(typeof(PlantCategory)))
+                {
+                    <MudListItem T="PlantCategory?" Value="cat"
+                                 OnClick="() => FilterByCategory(cat)">
+                        <div class="d-flex justify-space-between align-center w-100">
+                            <MudText Typo="Typo.h6">@cat</MudText>
+                            <MudText Typo="Typo.h6">@(_plants?.Count(p => p.Category == cat) ?? 0)</MudText>
+                        </div>
+                    </MudListItem>
+                }
 
             </MudList>
 
             <MudDivider Class="my-4" />
 
-            <!-- Sorting -->
-
-            <MudText Typo="Typo.subtitle2"
-                     Class="font-weight-bold mb-2">
-
-                Sort By
-
+            <!-- CARE LEVEL -->
+            <MudText Typo="Typo.h5" Class="font-weight-bold mb-2">
+                Care Level
             </MudText>
 
-            <MudSelect T="string"
-                       Value="_sortOption"
-                       ValueChanged="OnSortChanged"
-                       Dense="true"
-                       Variant="Variant.Outlined"
-                       Class="mb-4">
+            <MudCheckBox T="bool" 
+                         Value="@(_selectedCareLevel == 1)" 
+                         ValueChanged="v => FilterByCareLevel(v, 1)"
+                         Color="Color.Primary">
+                <LabelContent>
+                    <MudText Typo="Typo.h6" Class="ml-2 font-weight-bold">
+                        Beginner
+                    </MudText>
+                </LabelContent>
+            </MudCheckBox>
 
-                <MudSelectItem Value="@("price_asc")">
-                    Price: Low to High
-                </MudSelectItem>
+            <MudCheckBox T="bool" 
+                         Value="@(_selectedCareLevel == 2)" 
+                         ValueChanged="v => FilterByCareLevel(v, 2)"
+                         Color="Color.Primary">
+                <LabelContent>
+                    <MudText Typo="Typo.h6" Class="ml-2 font-weight-bold">
+                        Moderate
+                    </MudText>
+                </LabelContent>
+            </MudCheckBox>
+            
+            <MudCheckBox T="bool" 
+                         Value="@(_selectedCareLevel == 3)" 
+                         ValueChanged="v => FilterByCareLevel(v, 3)"
+                         Color="Color.Primary">
+                <LabelContent>
+                    <MudText Typo="Typo.h6" Class="ml-2 font-weight-bold">
+                        Advanced
+                    </MudText>
+                </LabelContent>
+            </MudCheckBox>
+            
+            <MudDivider Class="my-4" />
 
-                <MudSelectItem Value="@("price_desc")">
-                    Price: High to Low
-                </MudSelectItem>
+            <!--  PET FRIENDLY  -->
+            <MudText Typo="Typo.h5" Class="font-weight-bold mb-2">
+                Pet Friendly
+            </MudText>
 
-                <MudSelectItem Value="@("care")">
-                    Care Level
-                </MudSelectItem>
-
-            </MudSelect>
+            <MudSwitch T="bool?"
+                       Value="_isPetFriendly"
+                       ValueChanged="OnPetFriendlyChanged"
+                       Color="Color.Primary"
+                       Class="mt-2">
+                <ChildContent>
+                    <MudText Typo="Typo.h6">Pet Friendly</MudText>
+                </ChildContent>
+            </MudSwitch>
 
             <MudDivider Class="my-4" />
 
-            <!-- Care Level -->
-
-            <MudText Typo="Typo.subtitle2"
-                     Class="font-weight-bold mb-2">
-
-                Care Level
-
-            </MudText>
-
-            <MudCheckBox T="bool"
-                         Value="@(_selectedCareLevel == 1)"
-                         ValueChanged="@(x => FilterByCareLevel(x, 1))"
-                         Label="Beginner Friendly"
-                         Dense="true" />
-
-            <MudCheckBox T="bool"
-                         Value="@(_selectedCareLevel == 2)"
-                         ValueChanged="@(x => FilterByCareLevel(x, 2))"
-                         Label="Moderate"
-                         Dense="true" />
-
-            <MudCheckBox T="bool"
-                         Value="@(_selectedCareLevel == 3)"
-                         ValueChanged="@(x => FilterByCareLevel(x, 3))"
-                         Label="Advanced"
-                         Dense="true" />
-
-            <!-- Price -->
-
-            <MudText Typo="Typo.subtitle2"
-                     Class="font-weight-bold mb-2">
-
+            <!--  PRICE  -->
+            <MudText Typo="Typo.h5" Class="font-weight-bold mb-2">
                 Max Price
-
             </MudText>
 
             <MudSlider T="decimal"
-                       Min="10"
-                       Max="200"
+                       Min="8"
+                       Max="90"
                        Value="@_maxPrice"
                        ValueChanged="OnPriceChanged"
                        Color="Color.Primary"
                        ValueLabel="true" />
 
             <div class="d-flex justify-space-between mt-1">
-                <MudText Typo="Typo.caption">$10</MudText>
-                <MudText Typo="Typo.caption">$100</MudText>
+                <MudText Typo="Typo.h6">$8</MudText>
+                <MudText Typo="Typo.h6">$90</MudText>
             </div>
 
         </MudPaper>
-
     </aside>
 
     <!-- Products -->
@@ -166,11 +133,8 @@
 
         @if (_filteredPlants == null)
         {
-            <MudText Typo="Typo.h6"
-                     Class="text-center pa-8">
-
+            <MudText Typo="Typo.h4" Class="text-center pa-8">
                 Loading...
-
             </MudText>
         }
         else
@@ -193,7 +157,7 @@
                                     border-radius: 24px;
                                     overflow: hidden;">
 
-                            <MudCardContent Class="pa-3">
+                            <MudCardContent Class="pa-3 pb-0">
 
                                 <!-- Image -->
 
@@ -203,53 +167,60 @@
                                     overflow: hidden;
                                     width: 100%;
                                     height: 280px;">
-                                    
                                     <MudImage Src="@plant.ImageUrl"
                                               Alt="@plant.Name"
                                               ObjectFit="ObjectFit.Cover"
                                               Style="width: 100%; height: 100%; border-radius: 12px;" />
-
-
-
                                 </div>
 
                                 <!-- Name -->
-
-                                <MudText Typo="Typo.body1" Class="font-weight-bold mt-4 text-truncate">
+                                <MudText Typo="Typo.h5" Class="font-weight-bold mt-4 text-truncate">
                                     @plant.Name
                                 </MudText>
 
                                 <!-- Price -->
-
-                                <MudText Typo="Typo.body2"
-                                         Color="Color.Primary"
+                                <MudText Typo="Typo.h6"
+                                         Color="Color.Dark"
                                          Class="font-weight-bold mt-1">
 
                                     @plant.Price.ToString("C2", System.Globalization.CultureInfo.GetCultureInfo("en-US"))
 
                                 </MudText>
 
-                                <!-- Care -->
+                                <!-- Light requirement -->
+                                <div class="d-flex align-center mt-2">
+                                    <MudIcon Icon="@Icons.Material.Filled.WbSunny"
+                                             Color="Color.Warning"
+                                             Size="Size.Small" Class="me-1" />
 
-                                <div class="d-flex align-center mt-2 mb-2">
-
-                                    <MudText Typo="Typo.caption"
-                                             Class="me-2">
-
-                                        Care Level:
-
-                                    </MudText>
-
-                                    @for (int i = 1; i <= 3; i++)
+                                    @for (int i = 1; i < 3; i++)
                                     {
-                                        <MudIcon Icon="@(i <= plant.CareLevel
+                                        <MudIcon Icon="@(i <= (int)plant.Light
+                                                           ? Icons.Material.Filled.WbSunny
+                                                           : Icons.Material.Outlined.WbSunny)"
+                                                 Size="Size.Small"
+                                                 Color="Color.Warning"
+                                                 Class="me-1" />
+                                    }
+                                </div>
+                                
+                                <!-- Watering -->
+                                <div class="d-flex align-center">
+
+                                    <MudIcon Icon="@Icons.Material.Filled.WaterDrop"
+                                             Color="Color.Info"
+                                             Size="Size.Small"
+                                             Class="me-1" />
+
+                                    @for (int i = 1; i < 3; i++)
+                                    {
+                                        <MudIcon Icon="@(i <= (int)plant.Watering
                                                            ? Icons.Material.Filled.WaterDrop
                                                            : Icons.Material.Outlined.WaterDrop)"
                                                  Size="Size.Small"
-                                                 Color="Color.Primary"
+                                                 Color="Color.Info"
                                                  Class="me-1" />
                                     }
-
                                 </div>
 
                             </MudCardContent>
@@ -290,143 +261,3 @@
     </main>
 
 </div>
-
-@code {
-
-    private List<Plant>? _plants;
-    private List<Plant>? _filteredPlants;
-
-    private PlantCategory? _selectedCategory = null;
-
-    private int? _selectedCareLevel = null;
-
-    private decimal _maxPrice = 200;
-
-    private string _sortOption = "price_asc";
-
-    private Dictionary<int, int> _cartCounts = new();
-
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            _plants = await ProductService.GetPlantsAsync();
-
-            _filteredPlants = _plants.ToList();
-
-            ApplyFilters();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error loading plants: {ex.Message}");
-
-            _plants = new List<Plant>();
-
-            _filteredPlants = new List<Plant>();
-        }
-    }
-
-    private void FilterByCategory(PlantCategory? category)
-    {
-        _selectedCategory = category;
-
-        ApplyFilters();
-    }
-
-    private void FilterByCareLevel(bool value, int level)
-    {
-        if (value)
-        {
-            _selectedCareLevel = level;
-        }
-        else
-        {
-            _selectedCareLevel = null;
-        }
-
-        ApplyFilters();
-    }
-
-    private void OnPriceChanged(decimal value)
-    {
-        _maxPrice = value;
-
-        ApplyFilters();
-    }
-
-    private void OnSortChanged(string value)
-    {
-        _sortOption = value;
-
-        ApplyFilters();
-    }
-
-    private void ApplyFilters()
-    {
-        if (_plants == null)
-            return;
-
-        IEnumerable<Plant> query = _plants;
-
-        // Category
-
-        if (_selectedCategory != null)
-        {
-            query = query.Where(p => p.Category == _selectedCategory);
-        }
-
-        // Care Level
-
-        if (_selectedCareLevel != null)
-        {
-            query = query.Where(p => p.CareLevel == _selectedCareLevel);
-        }
-
-        // Price
-
-        query = query.Where(p => p.Price <= _maxPrice);
-
-        // Sorting
-
-        if (_sortOption == "price_desc")
-        {
-            query = query.OrderByDescending(p => p.Price);
-        }
-        else if (_sortOption == "care")
-        {
-            query = query.OrderBy(p => p.CareLevel);
-        }
-        else if (_sortOption == "category")
-        {
-            query = query.OrderBy(p => p.Category);
-        }
-        else
-        {
-            query = query.OrderBy(p => p.Price);
-        }
-
-
-        _filteredPlants = query.ToList();
-    }
-
-    private void AddToCart(Plant plant)
-    {
-        CartService.AddToCart(plant);
-
-        if (_cartCounts.ContainsKey(plant.Id))
-        {
-            _cartCounts[plant.Id]++;
-        }
-        else
-        {
-            _cartCounts[plant.Id] = 1;
-        }
-    }
-
-    private int GetPlantCount(int plantId)
-    {
-        return _cartCounts.ContainsKey(plantId)
-            ? _cartCounts[plantId]
-            : 0;
-    }
-}

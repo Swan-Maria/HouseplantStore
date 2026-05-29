@@ -16,8 +16,6 @@ public partial class MainLayout : LayoutComponentBase, IBrowserViewportObserver,
     private List<Plant> _plants = new();
     private List<Plant> _filteredPlants = new();
 
-    private string _searchQuery;
-
     private bool _cartDrawer;
     private bool _isDarkMode;
     private bool _isLargeScreen = true;
@@ -45,27 +43,6 @@ public partial class MainLayout : LayoutComponentBase, IBrowserViewportObserver,
     {
         _isLargeScreen = args.Breakpoint >= Breakpoint.Lg;
         await InvokeAsync(StateHasChanged);
-    }
-
-    private void OnSearchChanged(string value)
-    {
-        _searchQuery = value;
-        ApplyFilters();
-    }
-
-    private void ApplyFilters()
-    {
-        if (_plants == null) return;
-
-        IEnumerable<Plant> query = _plants;
-
-        if (!string.IsNullOrWhiteSpace(_searchQuery))
-        {
-            query = query.Where(p =>
-                p.Name.Contains(_searchQuery, StringComparison.OrdinalIgnoreCase));
-        }
-
-        _filteredPlants = query.ToList();
     }
 
     private void NavigateTo(string path) =>

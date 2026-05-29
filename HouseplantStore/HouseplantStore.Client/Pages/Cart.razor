@@ -1,0 +1,128 @@
+﻿@page "/cart"
+@using HouseplantStore.Client.Services
+
+@inject CartService CartService
+@inject NavigationManager NavigationManager
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="py-6">
+
+    <!-- HEADER -->
+    <div class="d-flex align-center justify-space-between mb-4">
+        <MudText Typo="Typo.h2">
+            Your Cart (@CartService.TotalItems)
+        </MudText>
+    </div>
+
+    <!-- EMPTY -->
+    @if (!CartService.Items.Any())
+    {
+        <MudText Typo="Typo.body2" Class="text-center my-10">
+            Your cart is empty.
+        </MudText>
+    }
+    else
+    {
+        <MudGrid>
+
+            <!-- ITEMS -->
+            <MudItem xs="12" md="8">
+
+                @foreach (var item in CartService.Items)
+                {
+                    <div class="d-flex align-center gap-3 my-3 pa-3 rounded-lg"
+                         style="background-color: rgba(255,255,255,0.05);">
+
+                        <MudImage Src="@item.Plant.ImageUrl"
+                                  Width="70"
+                                  Height="70"
+                                  ObjectFit="ObjectFit.Cover"
+                                  Class="rounded" />
+
+                        <div class="flex-grow-1">
+                            <MudText Typo="Typo.body1" Class="font-weight-bold" >
+                                @item.Plant.Name
+                            </MudText>
+
+                            <MudText Typo="Typo.caption" >
+                                @((item.Plant.Price * item.Quantity)
+                                    .ToString("C2", System.Globalization.CultureInfo.GetCultureInfo("en-US")))
+                            </MudText>
+                        </div>
+
+                        <div class="d-flex align-center gap-1">
+                            <MudIconButton Icon="@Icons.Material.Filled.Remove"
+                                           OnClick="() => CartService.RemoveOne(item.Plant)" 
+                                           Color="Color.Dark"/>
+
+                            <MudText>
+                                @item.Quantity
+                            </MudText>
+
+                            <MudIconButton Icon="@Icons.Material.Filled.Add"
+                                           OnClick="() => CartService.AddToCart(item.Plant)" 
+                                           Color="Color.Dark"/>
+                        </div>
+                    </div>
+                }
+
+            </MudItem>
+
+            <!-- SUMMARY -->
+            <MudItem xs="12" md="4">
+
+                <MudPaper Class="pa-4 rounded-lg" Elevation="2">
+
+                    <MudText Typo="Typo.h5" Class="mb-3" >
+                        Order Summary
+                    </MudText>
+
+                    <div class="d-flex justify-space-between my-1">
+                        <MudText Typo="Typo.h6">
+                            Subtotal:
+                        </MudText>
+                        <MudText Typo="Typo.h6" Class="font-weight-bold">
+                            @CartService.Subtotal.ToString("C2", System.Globalization.CultureInfo.GetCultureInfo("en-US"))
+                        </MudText>
+                    </div>
+                    <div class="d-flex justify-space-between my-1">
+                        <MudText  Typo="Typo.h6">
+                            Shipping:
+                        </MudText>
+                        <MudText  Typo="Typo.h6" Class="font-weight-bold">
+                            @CartService.Shipping.ToString("C2", System.Globalization.CultureInfo.GetCultureInfo("en-US"))
+                        </MudText>
+                    </div>
+                    <div class="d-flex justify-space-between my-1">
+                        <MudText Typo="Typo.h6">
+                            Tax (8%):
+                        </MudText>
+                        <MudText  Typo="Typo.h6" Class="font-weight-bold">
+                            @CartService.Tax.ToString("C2", System.Globalization.CultureInfo.GetCultureInfo("en-US"))
+                        </MudText>
+                    </div>
+                    <MudDivider Class="my-2"/>
+                    <div class="d-flex justify-space-between my-2">
+                        <MudText Typo="Typo.h4" Class="font-weight-bold">
+                            Total:
+                        </MudText>
+                        <MudText Typo="Typo.h4" Class="font-weight-bold">
+                            @CartService.Total.ToString("C2", System.Globalization.CultureInfo.GetCultureInfo("en-US"))
+                        </MudText>
+                    </div>
+
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               FullWidth="true"
+                               Class="mt-8"
+                               OnClick="@(() => NavigationManager.NavigateTo("/checkout"))">
+                        Proceed to Order
+                    </MudButton>
+
+                </MudPaper>
+
+            </MudItem>
+
+        </MudGrid>
+    }
+
+</MudContainer>

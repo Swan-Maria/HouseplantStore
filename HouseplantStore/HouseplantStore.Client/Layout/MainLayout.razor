@@ -1,11 +1,6 @@
 ﻿@inherits LayoutComponentBase
-@implements IBrowserViewportObserver
-@implements IAsyncDisposable
-@implements IDisposable
 @using HouseplantStore.Client.Services
 @inject ProductService ProductService
-@using MudBlazor.Services
-@using Shared.Models
 @inject CartService CartService
 @inject NavigationManager NavigationManager
 @inject IBrowserViewportService ViewportService
@@ -17,60 +12,69 @@
 <MudSnackbarProvider/>
 
 <MudLayout style="min-height: 100vh; display: flex; flex-direction: column;">
-    
+    <!--- NAVIGATE --->
     <MudAppBar Color="Color.Primary" Fixed="true" Elevation="1">
+        <!--- LOGO+NAME --->
         <div class="d-flex align-center cursor-pointer me-4" @onclick="@(() => NavigateTo("/"))">
-            <MudIcon Icon="@Icons.Material.Filled.LocalFlorist" Color="Color.Secondary" Size="Size.Large" Class="me-2" />
+            <MudIcon Icon="@Icons.Material.Filled.LocalFlorist" Color="Color.Secondary" Size="Size.Large" Class="me-2"/>
             <div class="d-flex flex-column" style="justify-content: center;">
-                <MudText Typo="Typo.h1" Color="Color.Secondary" Class="font-weight-bold"> FloraMind</MudText>
-                <MudText Typo="Typo.caption" Color="Color.Secondary">Bring Nature Home</MudText>
+                <MudText Typo="Typo.h1" Color="Color.Secondary" Class="font-weight-bold">
+                     FloraMind
+                </MudText>
+                <MudText Typo="Typo.caption" Color="Color.Secondary">
+                    Bring Nature Home
+                </MudText>
             </div>
         </div>
-    
-        <MudSpacer />
-        
-        <div class="d-none d-lg-flex mx-4 gap-2 flex-nowrap">
-            <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="@(() => NavigateTo("/"))">Shop Plants</MudButton>
-            <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="@(() => NavigateTo("/about"))">About Us</MudButton>
-            <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="@(() => NavigateTo("/contacts"))">Contacts</MudButton>
-        </div>
 
+        <MudSpacer/>
+        
+        <!--- MENU --->
+        <div class="d-none d-lg-flex mx-4 gap-2 flex-nowrap">
+            <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="@(() => NavigateTo("/"))">
+                Shop Plants
+            </MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="@(() => NavigateTo("/about"))">
+                 About Us
+            </MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="@(() => NavigateTo("/contacts"))">
+                Contacts
+            </MudButton>
+        </div>
+        
+        <!--- MENU --->
         <div class="d-flex d-lg-none mx-2">
-            <MudMenu Icon="@Icons.Material.Filled.KeyboardArrowDown" 
-                     Color="Color.Secondary" 
-                     Direction="Direction.Bottom" 
+            <MudMenu Icon="@Icons.Material.Filled.KeyboardArrowDown"
+                     Color="Color.Secondary"
+                     Direction="Direction.Bottom"
                      OffsetY="true"
                      ActivationEvent="MouseEvent.MouseOver"
                      AnchorOrigin="Origin.BottomLeft">
-                <MudMenuItem OnClick="@(() => NavigateTo("/"))">Shop Plants</MudMenuItem>
-                <MudMenuItem OnClick="@(() => NavigateTo("/about"))">About Us</MudMenuItem>
-                <MudMenuItem OnClick="@(() => NavigateTo("/contacts"))">Contacts</MudMenuItem>
+                <MudMenuItem OnClick="@(() => NavigateTo("/"))">
+                    Shop Plants
+                </MudMenuItem>
+                <MudMenuItem OnClick="@(() => NavigateTo("/about"))">
+                    About Us
+                </MudMenuItem>
+                <MudMenuItem OnClick="@(() => NavigateTo("/contacts"))">
+                    Contacts
+                </MudMenuItem>
             </MudMenu>
         </div>
-
-        <div class="d-flex align-center mx-2" style="width: 200px; flex-shrink: 0;">
-            <MudTextField @bind-Value="_searchQuery"
-                          Placeholder="Search..."
-                          Variant="Variant.Outlined"
-                          Adornment="Adornment.Start"
-                          AdornmentIcon="@Icons.Material.Filled.Search"
-                          AdornmentColor="Color.Secondary"
-                          Margin="Margin.Dense"
-                          Clearable="true"
-                          Immediate="true"
-                          Style="color: white; background-color: rgba(255, 255, 255, 0.15);" />
-        </div>
-    
+        
+        <!--- THEME --->
         <MudIconButton Icon="@(_isDarkMode ? Icons.Material.Filled.WbSunny : Icons.Material.Filled.NightsStay)"
                        Color="Color.Secondary"
                        OnClick="ToggleTheme"
                        Class="mr-2"/>
-                       
+
+        <!--- CART --->
         <MudBadge Content="@CartService.TotalItems" Color="Color.Error" Overlap="true" Visible="@(CartService.TotalItems > 0)">
-            <MudIconButton Icon="@Icons.Material.Filled.ShoppingCart" Color="Color.Secondary" OnClick="DrawerToggle" />
+            <MudIconButton Icon="@Icons.Material.Filled.ShoppingCart" Color="Color.Secondary" OnClick="DrawerToggle"/>
         </MudBadge>
     </MudAppBar>
     
+    <!--- CART DRAWER --->
     <MudDrawer @bind-Open="_cartDrawer"
                Color="Color.Primary"
                ClipMode="DrawerClipMode.Always"
@@ -79,75 +83,114 @@
                Variant="@(_isLargeScreen ? DrawerVariant.Persistent : DrawerVariant.Temporary)"
                Width="@(_isLargeScreen ? "400px" : "100%")">
         <div class="pa-4 d-flex flex-column h-100 mud-text-primary">
+            <!--- CART TITELE --->
             <div class="d-flex align-center justify-space-between mb-4">
-                <MudText Color="Color.Secondary" Typo="Typo.h5" Class="font-weight-bold">Your Cart (@CartService.TotalItems)</MudText>
+                <MudText Color="Color.Secondary" Typo="Typo.h2">
+                    Your Cart (@CartService.TotalItems)
+                </MudText>
                 <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Secondary" OnClick="DrawerToggle"/>
             </div>
-            
+
+            <!--- CART ITEM --->
             <div class="flex-grow-1 overflow-y-auto pr-2">
                 @if (!CartService.Items.Any())
                 {
-                    <MudText Typo="Typo.body1" Class="text-center my-8" Color="Color.Secondary">Your cart is empty.</MudText>
+                    <MudText Typo="Typo.body1" Class="text-center my-8" Color="Color.Secondary">
+                        Your cart is empty.
+                    </MudText>
                 }
                 else
                 {
                     @foreach (var item in CartService.Items)
                     {
                         <div class="d-flex align-center gap-3 my-3 pa-2 rounded-lg" style="background-color: rgba(255,255,255,0.05);">
-                            <MudImage Src="@item.Plant.ImageUrl" Alt="@item.Plant.Name" Width="60" Height="60" ObjectFit="ObjectFit.Cover" Class="rounded" />
+                            <MudImage Src="@item.Plant.ImageUrl" 
+                                      Alt="@item.Plant.Name" 
+                                      Width="60" 
+                                      Height="60" 
+                                      ObjectFit="ObjectFit.Cover" 
+                                      Class="rounded"/>
                             <div class="flex-grow-1" style="min-width: 0;">
-                                <MudText Typo="Typo.body2"  Color="Color.Secondary" Class="font-weight-bold text-truncate">@item.Plant.Name</MudText>
+                                <MudText Typo="Typo.body2" Color="Color.Secondary" Class="font-weight-bold text-truncate">
+                                    @item.Plant.Name
+                                </MudText>
                                 <MudText Typo="Typo.caption" Color="Color.Secondary">
                                     @((item.Plant.Price * item.Quantity).ToString("C2", System.Globalization.CultureInfo.GetCultureInfo("en-US")))
                                 </MudText>
                             </div>
                             <div class="d-flex align-center gap-1">
-                                <MudIconButton Icon="@Icons.Material.Filled.Remove" Size="Size.Small" Color="Color.Secondary" 
-                                               OnClick="() => CartService.RemoveOne(item.Plant)" />
-                                <MudText Typo="Typo.body2" Class="mx-1">@item.Quantity</MudText>
-                                <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Small" Color="Color.Secondary" 
-                                               OnClick="() => CartService.AddToCart(item.Plant)" />
+                                <MudIconButton Icon="@Icons.Material.Filled.Remove" Size="Size.Small" Color="Color.Secondary"
+                                               OnClick="() => CartService.RemoveOne(item.Plant)"/>
+                                <MudText Typo="Typo.body2" Class="mx-1" Color="Color.Secondary">
+                                    @item.Quantity
+                                </MudText>
+                                <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Small" Color="Color.Secondary"
+                                               OnClick="() => CartService.AddToCart(item.Plant)"/>
                             </div>
                         </div>
                     }
                 }
             </div>
             
+            <!--- CART BILL --->
             @if (CartService.Items.Any())
             {
-                <MudDivider Class="my-4" />
+                <MudDivider Class="my-4"/>
                 <div class="d-flex justify-space-between my-1">
-                    <MudText Color="Color.Secondary"  Typo="Typo.body2">Subtotal:</MudText>
-                    <MudText Color="Color.Secondary"  Typo="Typo.body2" Class="font-weight-bold">@CartService.Subtotal.ToString("C2", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</MudText>
+                    <MudText Color="Color.Secondary" Typo="Typo.h6">Subtotal:</MudText>
+                    <MudText Color="Color.Secondary" Typo="Typo.h6" Class="font-weight-bold">
+                        @CartService.Subtotal.ToString("C2", System.Globalization.CultureInfo.GetCultureInfo("en-US"))
+                    </MudText>
                 </div>
                 <div class="d-flex justify-space-between my-1">
-                    <MudText Color="Color.Secondary"  Typo="Typo.body2">Shipping:</MudText>
-                    <MudText Color="Color.Secondary"  Typo="Typo.body2" Class="font-weight-bold">@CartService.Shipping.ToString("C2", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</MudText>
+                    <MudText Color="Color.Secondary" Typo="Typo.h6">
+                        Shipping:
+                    </MudText>
+                    <MudText Color="Color.Secondary" Typo="Typo.h6" Class="font-weight-bold">
+                        @CartService.Shipping.ToString("C2", System.Globalization.CultureInfo.GetCultureInfo("en-US"))
+                    </MudText>
                 </div>
                 <div class="d-flex justify-space-between my-1">
-                    <MudText Color="Color.Secondary"  Typo="Typo.body2">Tax (8%):</MudText>
-                    <MudText Color="Color.Secondary"  Typo="Typo.body2" Class="font-weight-bold">@CartService.Tax.ToString("C2", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</MudText>
+                    <MudText Color="Color.Secondary" Typo="Typo.h6">
+                        Tax (8%):
+                    </MudText>
+                    <MudText Color="Color.Secondary" Typo="Typo.h6" Class="font-weight-bold">
+                        @CartService.Tax.ToString("C2", System.Globalization.CultureInfo.GetCultureInfo("en-US"))
+                    </MudText>
                 </div>
-                <MudDivider Class="my-2" />
+                <MudDivider Class="my-2"/>
                 <div class="d-flex justify-space-between my-2">
-                    <MudText Color="Color.Secondary"  Typo="Typo.h6" Class="font-weight-bold">Total:</MudText>
-                    <MudText Color="Color.Secondary"  Typo="Typo.h6" Class="font-weight-bold" >@CartService.Total.ToString("C2", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</MudText>
+                    <MudText Color="Color.Secondary" Typo="Typo.h5" Class="font-weight-bold">
+                        Total:
+                    </MudText>
+                    <MudText Color="Color.Secondary" Typo="Typo.h5" Class="font-weight-bold">
+                        @CartService.Total.ToString("C2", System.Globalization.CultureInfo.GetCultureInfo("en-US"))
+                    </MudText>
                 </div>
                 
+                <!--- CART BUTTON --->
                 <div class="d-flex flex-column gap-2 mt-4">
-                    <MudButton Variant="Variant.Filled" 
-                               Color="Color.Secondary" 
-                               FullWidth="true" 
-                               Class="rounded-pill py-3" 
-                               OnClick="@(() => { _cartDrawer = false; NavigateTo("/checkout"); })">
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Secondary"
+                               FullWidth="true"
+                               Class="rounded-pill py-3"
+                               OnClick="@(() =>
+                                        {
+                                            _cartDrawer = false;
+                                            NavigateTo("/checkout");
+                                        })">
                         Proceed to Checkout
                     </MudButton>
-    
-                    <MudButton Variant="Variant.Outlined" 
-                               Color="Color.Secondary" 
-                               FullWidth="true" 
-                               Class="rounded-pill py-3" 
-                               OnClick="@(() => { _cartDrawer = false; NavigateTo("/cart"); })">
+
+                    <MudButton Variant="Variant.Outlined"
+                               Color="Color.Secondary"
+                               FullWidth="true"
+                               Class="rounded-pill py-3"
+                               OnClick="@(() =>
+                                        {
+                                            _cartDrawer = false;
+                                            NavigateTo("/cart");
+                                        })">
                         View Cart
                     </MudButton>
                 </div>
@@ -156,29 +199,39 @@
     </MudDrawer>
     
     <MudMainContent style="flex: 1; display: flex; flex-direction: column;">
+        <!--- MAIN ITEM --->
         <div style="flex: 1; width: 100%;">
             <MudContainer MaxWidth="MaxWidth.False" Class="px-6 py-4" Style="width: 100%; min-height: 100%;">
                 @Body
             </MudContainer>
         </div>
-
+    
+        <!--- FOOTER --->
         <footer style="
         margin-top: auto;
         background-color: @(_isDarkMode ? _customTheme.PaletteDark.Primary : _customTheme.PaletteLight.Primary);
         color: @(_isDarkMode ? _customTheme.PaletteDark.Secondary : _customTheme.PaletteLight.Secondary);
         padding: 24px 0;
         border-top: 1px solid rgba(0,0,0,0.05);">
-            
+
             <MudContainer MaxWidth="MaxWidth.False" Class="px-6">
                 <div class="d-flex flex-column flex-sm-row align-center justify-space-between gap-4">
                     <div class="d-flex align-center">
                         <MudIcon Icon="@Icons.Material.Filled.LocalFlorist" Color="Color.Secondary" Class="me-2"/>
-                        <MudText Typo="Typo.body1" Class="font-weight-bold">FloraMind</MudText>
-                        <MudText Typo="Typo.caption" Class="ms-2">© 2026 Bring Nature Home</MudText>
+                        <MudText Typo="Typo.h4" Class="font-weight-bold">
+                            FloraMind
+                        </MudText>
+                        <MudText Typo="Typo.caption" Class="ms-2">
+                            © 2026 Bring Nature Home
+                        </MudText>
                     </div>
                     <div class="d-flex gap-4">
-                        <MudLink Color="Color.Secondary" Underline="Underline.None" Typo="Typo.body2" href="#">Privacy Policy</MudLink>
-                        <MudLink Color="Color.Secondary" Underline="Underline.None" Typo="Typo.body2" href="#">Terms of Service</MudLink>
+                        <MudLink Color="Color.Secondary" Underline="Underline.None" Typo="Typo.body2" href="#">
+                            Privacy Policy
+                        </MudLink>
+                        <MudLink Color="Color.Secondary" Underline="Underline.None" Typo="Typo.body2" href="#">
+                            Terms of Service
+                        </MudLink>
                     </div>
                 </div>
             </MudContainer>
@@ -187,8 +240,10 @@
 </MudLayout>
 
 @code {
+    // CUSTOM THEME
     private readonly MudTheme _customTheme = new() 
     {
+        // CUSTOM COLOR
         PaletteLight = new PaletteLight()
         {
             Primary = "#b1ca93", 
@@ -207,6 +262,8 @@
             TextPrimary = "#162010", 
             TextSecondary = "#162010"
         },
+        
+        // CUSTOM TYPOGRAPHY
         Typography = new Typography()
         {
             Default = new DefaultTypography()
@@ -225,31 +282,36 @@
 
             H2 = new H2Typography()
             {
+                FontFamily = new[] { "Georgia", "serif" },
                 FontSize = "1.8rem",
                 FontWeight = "500"
             },
 
             H3 = new H3Typography()
             {
+                FontFamily = new[] { "Georgia", "serif" },
                 FontSize = "1.5rem",
                 FontWeight = "500"
             },
 
             H4 = new H4Typography()
-            {
+            { 
+                FontFamily = new[] { "Georgia", "serif" },
                 FontSize = "1.25rem",
                 FontWeight = "500"
             },
 
             H5 = new H5Typography()
             {
+                FontFamily = new[] { "Georgia", "serif" },
                 FontSize = "1.1rem",
                 FontWeight = "500"
             },
 
             H6 = new H6Typography()
             {
-                FontSize = "1rem",
+                FontFamily = new[] { "Georgia", "serif" },
+                FontSize = "0.8rem",
                 FontWeight = "500"
             }
         }
